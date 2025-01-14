@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data</title>
+<style>
+	 header {
+            background: linear-gradient(45deg, #010101, #2196f3);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+    body {
+    font-family: Arial, sans-serif;
+    text-align: left;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+h2 {
+    margin-top: 20px;
+    color: #4CAF50;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 14px;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#result {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+</style>
+</head>
+<body>
+	<header>
+        <h1>BLOCKPEDC</h1>
+        <p>ًWelcome To System</p>
+    </header>
+
+    <div class="container">
+        <h1>Student data Management</h1>
+        <div class="form-group">
+            <h2> New Graduate Information</h2>
+            <label for="id">Id number :</label>
+            <input type="number" id="id" placeholder="Id number">
+            <label for="name">Arabic Name:</label>
+            <input type="text" id="name" placeholder="Arabic Name ">
+			<label for="name">English Name:</label>
+            <input type="text" id="name" placeholder="English Name ">
+            <label for="college">College</label>
+            <input type="text" id="college" placeholder="College">
+            <label for="major">Major</label>
+            <input type="text" id="major" placeholder="Major">
+            <label for="gender">Gender</label>
+            <input type="text" id="gender" placeholder="Gender">
+            <label for="studentNumber"> student Number </label>
+            <input type="number" id="studentNumber" placeholder="student Number ">
+            <label for="gpa">Gpa</label>
+            <input type="number" id="gpa" placeholder="Gpa">
+            <label for="universityId">University Id</label>
+            <input type="number" id="universityId" placeholder="University Id ">
+            <label for="universityName">University Name</label>
+            <input type="text" id="universityName" placeholder="اسم الجامعة">
+            <button id="addStudentBtn"> Add</button>
+        </div>
+
+        <div class="form-group">
+            <h2> Results</h2>
+            <label for="universitySearch">Query by Unervisty Id</label>
+            <input type="number" id="universitySearch" placeholder="University Id">
+            <button id="searchByUniversityBtn"> Search</button>
+        </div>
+
+        <div class="form-group">
+            <label for="idSearch">Query by Id number</label>
+            <input type="number" id="idSearch" placeholder="Id number ">
+            <button id="searchByIdBtn">Search</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.0.1-alpha.5/web3.min.js"
+    integrity="sha512-NfffVWpEqu1nq+658gzlJQilRBOvjs+PhEKSjT9gkQXRy9OfxI2TOXr33zS7MgGyTpBa5qtC6mKJkQGd9dN/rw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+    <script>
+        
+let web3;
+let studentDataContract;
+const contractAddress = "0x0005419e62674Bd979cDE48340cAbf6dCdD0e6b3";
+    const contractABI  =[
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_college",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_major",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_gender",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_studentNumber",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_gpa",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_universityId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_universityName",
+				"type": "string"
+			}
+		],
+		"name": "addStudent",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "getStudentsById",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "college",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "major",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "gender",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "studentNumber",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "gpa",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "universityId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "universityName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "code",
+						"type": "string"
+					}
+				],
+				"internalType": "struct StudentData.Student[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_universityId",
+				"type": "uint256"
+			}
+		],
+		"name": "getStudentsByUniversity",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "college",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "major",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "gender",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "studentNumber",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "gpa",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "universityId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "universityName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "code",
+						"type": "string"
+					}
+				],
+				"internalType": "struct StudentData.Student[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "studentsById",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "college",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "major",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "gender",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "studentNumber",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "gpa",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "universityId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "universityName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "code",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "studentsByUniversity",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "college",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "major",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "gender",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "studentNumber",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "gpa",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "universityId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "universityName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "code",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+window.onload = async function() {
+   
+    if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+           
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            studentDataContract = new web3.eth.Contract(contractABI, contractAddress);
+        } catch (error) {
+            console.log("User denied account access or an error occurred", error);
+        }
+    } else {
+        alert("Please install MetaMask to interact with this dApp.");
+    }
+
+   
+    document.getElementById('addStudentBtn').addEventListener('click', async function() {
+        const accounts = await web3.eth.getAccounts();
+        const id = document.getElementById('id').value;
+        const name = document.getElementById('name').value;
+        const college = document.getElementById('college').value;
+        const major = document.getElementById('major').value;
+        const gender = document.getElementById('gender').value;
+        const studentNumber = document.getElementById('studentNumber').value;
+        const gpa = document.getElementById('gpa').value;
+        const universityId = document.getElementById('universityId').value;
+        const universityName = document.getElementById('universityName').value;
+
+        try {
+            await studentDataContract.methods.addStudent(id, name, college, major, gender, studentNumber, gpa, universityId, universityName).send({ from: accounts[0] });
+            alert("Done");
+        } catch (error) {
+            console.log(error);
+            alert("Error");
+        }
+    });
+
+    
+    document.getElementById('searchByUniversityBtn').addEventListener('click', async function() {
+        const universityId = document.getElementById('universitySearch').value;
+        try {
+            const students = await studentDataContract.methods.getStudentsByUniversity(universityId).call();
+            displayResults(students);
+        } catch (error) {
+            console.log(error);
+            alert("Error");
+        }
+    });
+
+  
+    document.getElementById('searchByIdBtn').addEventListener('click', async function() {
+        const id = document.getElementById('idSearch').value;
+        try {
+            const students = await studentDataContract.methods.getStudentsById(id).call();
+            displayResults(students);
+        } catch (error) {
+            console.log(error);
+            alert("Error");
+        }
+    });
+};
+
+
+function displayResults(students) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = '';
+    if (students.length === 0) {
+        resultDiv.innerHTML = '<p>No Rows  </p>';
+        return;
+    }
+    students.forEach(student => {
+        const studentInfo = `
+            <p><strong>Name:</strong> ${student.name}</p>
+            <p><strong>College:</strong> ${student.college}</p>
+            <p><strong>Major:</strong> ${student.major}</p>
+            <p><strong>Gender:</strong> ${student.gender}</p>
+            <p><strong>StdNo :</strong> ${student.studentNumber}</p>
+            <p><strong>Gpa:</strong> ${student.gpa}</p>
+            <p><strong>University :</strong> ${student.universityName}</p>
+            <p><strong>Code:</strong> ${student.code}</p>
+            <hr>
+        `;
+        resultDiv.innerHTML += studentInfo;
+    });
+}
+
+
+    </script>
+</body>
+</html>

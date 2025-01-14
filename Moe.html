@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>  High School Results - Tawjihi</title>
+    <style>
+
+
+        header {
+            background: linear-gradient(45deg, #010101, #2196f3);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+	<header>
+        <h1>BLOCKPEDC</h1>
+        <p>ًWelcome To System</p>
+    </header>
+    <div class="container">
+        <h1>High School Results - Tawjihi</h1>
+
+        <form id="resultForm">
+            <input type="text" id="idNumber" placeholder="id number " required>
+            <input type="text" id="seatNumber" placeholder="Arabic name " required>
+			<input type="text" id="seatNumber" placeholder="English Name " required>
+			<input type="text" id="seatNumber" placeholder="Seat no " required>
+            <input type="text" id="year" placeholder="year" required>
+            <input type="text" id="certificateType" placeholder="certificate Type " required>
+            <input type="text" id="grade" placeholder="Gpa" required>
+            <input type="text" id="school" placeholder="School" required>
+            <button type="submit">Save </button>
+        </form>
+
+        <h2>Results By Id Number</h2>
+        <input type="text" id="searchIdNumber" placeholder="id number" required>
+        <button onclick="getResult()">Show result </button>
+
+        <div class="result" id="resultDisplay">
+            <!-- سيتم عرض النتيجة هنا -->
+        </div>
+    </div>
+
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.0.1-alpha.5/web3.min.js"
+    integrity="sha512-NfffVWpEqu1nq+658gzlJQilRBOvjs+PhEKSjT9gkQXRy9OfxI2TOXr33zS7MgGyTpBa5qtC6mKJkQGd9dN/rw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+    <script>
+       
+        let web3;
+        let contract;
+        const contractAddress = '0xe88FD8E3227fb9Ba4C41b8B0c7ab571Eca1ee8a0'; 
+        const contractABI =
+		[
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_idNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_seatNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_year",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_certificateType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_grade",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_school",
+				"type": "string"
+			}
+		],
+		"name": "addResult",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_idNumber",
+				"type": "string"
+			}
+		],
+		"name": "getResult",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "idNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "seatNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "year",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "certificateType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "grade",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "school",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"name": "results",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "idNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "seatNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "year",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "certificateType",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "grade",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "school",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+;
+
+        window.onload = async () => {
+           
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.enable();
+                contract = new web3.eth.Contract(contractABI, contractAddress);
+            } else {
+                alert('MetaMask غير مثبت');
+            }
+        };
+
+        
+        document.getElementById('resultForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const idNumber = document.getElementById('idNumber').value;
+            const seatNumber = document.getElementById('seatNumber').value;
+            const year = document.getElementById('year').value;
+            const certificateType = document.getElementById('certificateType').value;
+            const grade = document.getElementById('grade').value;
+            const school = document.getElementById('school').value;
+
+            const accounts = await web3.eth.getAccounts();
+            await contract.methods.addResult(idNumber, seatNumber, year, certificateType, grade, school).send({ from: accounts[0] });
+            alert('Done');
+        });
+
+       
+        async function getResult() {
+            const idNumber = document.getElementById('searchIdNumber').value;
+            const result = await contract.methods.getResult(idNumber).call();
+            document.getElementById('resultDisplay').innerHTML = `
+                <p><span>idno :</span> ${result[0]}</p>
+                <p><span>setno :</span> ${result[1]}</p>
+                <p><span>year:</span> ${result[2]}</p>
+                <p><span>cert type :</span> ${result[3]}</p>
+                <p><span>gpa:</span> ${result[4]}</p>
+                <p><span>school:</span> ${result[5]}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>

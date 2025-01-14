@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Univeristy </title>
+    <style>
+        header {
+            background: linear-gradient(45deg, #010101, #2196f3);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 1rem;
+            font-style: italic;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            direction: rtl;
+            text-align: left;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        .form-container {
+            margin-bottom: 30px;
+        }
+        label {
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        input, button, text {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        input[type="number"] {
+            width: calc(100% - 22px);
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .university-list, .university-details {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .university-item {
+            padding: 12px;
+            border: 1px solid #ddd;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+	<header>
+        <h1>BLOCKPEDC</h1>
+        <p>ًWelcome To System</p>
+    </header>
+
+    <div class="container">
+        <h1>University Registry </h1>
+
+       
+        <div class="form-container">
+            <h3>Add New University</h3>
+            <label for="university-name">Arabic Name </label>
+            <input type="text" id="university-name" placeholder="University A name">
+            <label for="university-name">English Name</label>
+            <input type="text" id="university-name" placeholder="University E name">
+            <label for="university-name"> Address</label>
+            <input type="text" id="university-name" placeholder="Address">
+            <label for="unique-id">unique id </label>
+            <input type="number" id="unique-id" placeholder="Unique id" min="1">
+            <button onclick="addUniversity()">Add </button>
+        </div>
+
+        
+        <div class="form-container">
+            <h3>Query BY Unique ID</h3>
+            <label for="search-id">Unique id :</label>
+            <input type="number" id="search-id" placeholder="unique id ">
+            <button onclick="getUniversityDetails()">Show result </button>
+        </div>
+
+       
+        <div class="university-list">
+            <h3>Universities List </h3>
+            <div id="university-list"></div>
+        </div>
+
+       
+        <div class="university-details">
+            <h3>University Details </h3>
+            <div id="university-details"></div>
+        </div>
+
+		
+<div class="form-container">
+    <button onclick="getAllUniversities()">Show all </button>
+</div>
+
+    </div>
+
+   
+	<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.0.1-alpha.5/web3.min.js"
+    integrity="sha512-NfffVWpEqu1nq+658gzlJQilRBOvjs+PhEKSjT9gkQXRy9OfxI2TOXr33zS7MgGyTpBa5qtC6mKJkQGd9dN/rw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+    <script>
+       
+        if (typeof window.ethereum !== 'undefined') {
+            console.log('MetaMask is installed!');
+        } else {
+            alert('يرجى تثبيت MetaMask أو محفظة Ethereum لتتمكن من التفاعل مع العقد!');
+        }
+
+        let web3;
+        let contract;
+        const contractAddress = '0xa2cC01436B18169Da990A7200ff9F047AdbfF4E6'; 
+        const contractABI = [
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uniqueID",
+				"type": "uint256"
+			}
+		],
+		"name": "addUniversity",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "uniqueID",
+				"type": "uint256"
+			}
+		],
+		"name": "UniversityAdded",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getAllUniversities",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "uniqueID",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct UniversityRegistry.University[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "uniqueID",
+				"type": "uint256"
+			}
+		],
+		"name": "getUniversityDetails",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "universities",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "uniqueID",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "universityIDs",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+       
+        async function connectToContract() {
+           
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                try {
+                   
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                   
+                    contract = new web3.eth.Contract(contractABI, contractAddress);
+                    console.log('Success!');
+                } catch (error) {
+                    console.error('Error with MetaMask:', error);
+                }
+            }
+        }
+
+      
+        async function addUniversity() {
+            const name = document.getElementById('university-name').value;
+            const uniqueID = parseInt(document.getElementById('unique-id').value);
+
+            if (name && uniqueID && contract) {
+                const accounts = await web3.eth.getAccounts();
+                const account = accounts[0]; 
+
+                try {
+                    
+                    await contract.methods.addUniversity(name, uniqueID).send({ from: account });
+                    alert('Done!');
+                } catch (error) {
+                    alert('Error   : ' + error.message);
+                }
+            } else {
+                alert('MAke sure to connect with the wallet');
+            }
+        }
+
+       
+        async function getUniversityDetails() {
+            const uniqueID = parseInt(document.getElementById('search-id').value);
+
+            if (uniqueID && contract) {
+                try {
+                    const university = await contract.methods.getUniversityDetails(uniqueID).call();
+                    const detailsElement = document.getElementById('university-details');
+                    detailsElement.innerHTML = `
+                        <p>اسم الجامعة: ${university[0]}</p>
+                        <p>الرقم الفريد: ${university[1]}</p>
+                    `;
+                } catch (error) {
+                    alert('فشل في استرجاع بيانات الجامعة: ' + error.message);
+                }
+            } else {
+                alert('يرجى إدخال الرقم الفريد');
+            }
+        }
+
+		
+async function addUniversity() {
+    const name = document.getElementById('university-name').value;
+    const uniqueID = parseInt(document.getElementById('unique-id').value);
+
+    if (name && uniqueID && contract) {
+        const accounts = await web3.eth.getAccounts();
+        const account = accounts[0]; // حساب المستخدم
+
+        try {
+            
+            await contract.methods.addUniversity(name, uniqueID).send({ from: account });
+            alert('تم إضافة الجامعة بنجاح!');
+        } catch (error) {
+            alert('فشل في إضافة الجامعة: ' + error.message);
+        }
+    } else {
+        alert('يرجى التأكد من الاتصال بمحفظتك وملء جميع البيانات');
+    }
+}
+
+
+
+async function getAllUniversities() {
+    if (contract) {
+        try {
+           
+            const universities = await contract.methods.getAllUniversities().call();
+
+            const listElement = document.getElementById('university-list');
+            listElement.innerHTML = ''; 
+
+           
+            universities.forEach(university => {
+                const universityElement = document.createElement('div');
+                universityElement.classList.add('university-item');
+                universityElement.innerHTML = `
+                    <p>اسم الجامعة: ${university[0]}</p>
+                    <p>الرقم الفريد: ${university[1]}</p>
+                `;
+                listElement.appendChild(universityElement);
+            });
+
+        } catch (error) {
+            alert('فشل في استرجاع قائمة الجامعات: ' + error.message);
+        }
+    } else {
+        alert('يرجى التأكد من الاتصال بالعقد');
+    }
+}
+
+
+       
+        window.onload = connectToContract;
+    </script>
+
+</body>
+</html>
